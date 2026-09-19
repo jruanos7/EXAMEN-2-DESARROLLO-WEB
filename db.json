@@ -67,5 +67,37 @@
       "status": "active",
       "role": "employee"
     }
+  ],
+  "vacancies": [
+    {
+      "id": 1,
+      "puesto": "Desarrollador Frontend",
+      "departamento": "Tecnología",
+      "modalidad": "remoto",
+      "salarioBase": 8000,
+      "fechaPublicacion": "2026-09-01",
+      "estado": "abierta",
+      "candidatos": ["Ana López", "Carlos Pérez"]
+    },
+    {
+      "id": 2,
+      "puesto": "Analista de RRHH",
+      "departamento": "Recursos Humanos",
+      "modalidad": "presencial",
+      "salarioBase": 6000,
+      "fechaPublicacion": "2026-08-20",
+      "estado": "cerrada",
+      "candidatos": ["María Gómez"]
+    },
+    {
+      "id": 3,
+      "puesto": "QA Tester",
+      "departamento": "Calidad",
+      "modalidad": "híbrido",
+      "salarioBase": 7000,
+      "fechaPublicacion": "2026-09-10",
+      "estado": "abierta",
+      "candidatos": []
+    }
   ]
 }
