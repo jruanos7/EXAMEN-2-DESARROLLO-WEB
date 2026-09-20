@@ -1,6 +1,6 @@
 // src/layouts/Header.tsx
-import { Link, useLocation } from 'react-router-dom';
-import type { User } from '../types';
+import { Link, useLocation } from "react-router-dom";
+import type { User } from "../types";
 
 interface HeaderProps {
   user?: User;
@@ -8,8 +8,9 @@ interface HeaderProps {
 }
 
 const navItems = [
-  { to: '/dashboard', label: 'Dashboard' },
-  { to: '/empleados', label: 'Empleados' },
+  { to: "/dashboard", label: "Dashboard" },
+  { to: "/empleados", label: "Empleados" },
+  { to: "/vacantes", label: "Vacantes" },
 ];
 
 function Header({ user, onLogout }: HeaderProps) {
@@ -27,15 +28,16 @@ function Header({ user, onLogout }: HeaderProps) {
         {/* Navegación */}
         {user && (
           <nav className="hidden sm:flex items-center gap-1">
-            {navItems.map(item => (
+            {navItems.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 className={`
                   px-3 py-1.5 rounded-md text-sm font-medium transition-colors
-                  ${pathname.startsWith(item.to)
-                    ? 'bg-white/20 text-white'
-                    : 'text-white/75 hover:text-white hover:bg-white/10'
+                  ${
+                    pathname.startsWith(item.to)
+                      ? "bg-white/20 text-white"
+                      : "text-white/75 hover:text-white hover:bg-white/10"
                   }
                 `}
               >

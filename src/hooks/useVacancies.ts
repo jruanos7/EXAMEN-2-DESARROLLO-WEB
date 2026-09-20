@@ -1,47 +1,60 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import type { Vacancy } from "../types/Vacancy";
+// src/hooks/useVacancies.ts
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { vacancyService, type VacancyFilters } from '../services/vacancyService';
+import type { CreateVacancyDto, UpdateVacancyDto } from '../types';
 
-const API_URL = "http://localhost:3001/vacancies";
+export const vacancyKeys = {
+  all: ['vacancies'] as const,
+  list: (filters: VacancyFilters) => ['vacancies', 'list', filters] as const,
+  detail: (id: number) => ['vacancies', id] as const,
+};
 
-export function useVacancies(filters?: { search?: string; estado?: string }) {
-  return useQuery<Vacancy[], Error>({
-    queryKey: ["vacancies", filters],
-    queryFn: async () => {
-      const res = await axios.get(API_URL, { params: filters });
-      return res.data;
-    },
+export function useVacancies(filters: VacancyFilters = {}) {
+  return useQuery({
+    queryKey: vacancyKeys.list(filters),
+    queryFn: () => vacancyService.getAll(filters),
+  });
+}
+
+export function useVacancy(id: number | null) {
+  return useQuery({
+    queryKey: vacancyKeys.detail(id!),
+    queryFn: () => vacancyService.getById(id!),
+    enabled: !!id,
   });
 }
 
 export function useCreateVacancy() {
   const queryClient = useQueryClient();
-  return useMutation<Vacancy, Error, Vacancy>({
-    mutationFn: async (newVacancy: Vacancy) => {
-      const res = await axios.post(API_URL, newVacancy);
-      return res.data;
+
+  return useMutation({
+    mutationFn: (data: CreateVacancyDto) => vacancyService.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: vacancyKeys.all });
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vacancies"] }),
   });
 }
 
 export function useUpdateVacancy() {
   const queryClient = useQueryClient();
-  return useMutation<Vacancy, Error, { id: number; data: Partial<Vacancy> }>({
-    mutationFn: async ({ id, data }) => {
-      const res = await axios.put(`${API_URL}/${id}`, data);
-      return res.data;
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: UpdateVacancyDto }) =>
+      vacancyService.update(id, data),
+    onSuccess: (updatedVacancy) => {
+      queryClient.setQueryData(vacancyKeys.detail(updatedVacancy.id), updatedVacancy);
+      queryClient.invalidateQueries({ queryKey: vacancyKeys.all });
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vacancies"] }),
   });
 }
 
 export function useDeleteVacancy() {
   const queryClient = useQueryClient();
-  return useMutation<void, Error, number>({
-    mutationFn: async (id: number) => {
-      await axios.delete(`${API_URL}/${id}`);
+
+  return useMutation({
+    mutationFn: (id: number) => vacancyService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: vacancyKeys.all });
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vacancies"] }),
   });
 }
